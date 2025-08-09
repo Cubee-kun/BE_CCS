@@ -9,9 +9,10 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+
     @stack('styles')
-    <script src="{{ asset('js/app.js') }}" defer></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
     <div id="app" class="flex-1 flex flex-col">
