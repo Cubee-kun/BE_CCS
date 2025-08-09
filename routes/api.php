@@ -6,36 +6,24 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\DashboardController;
 
-// Auth routes (tanpa prefix 'auth')
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/logout', [AuthController::class, 'logout']);
-Route::post('/refresh', [AuthController::class, 'refresh']);
-Route::get('/user-profile', [AuthController::class, 'userProfile']);
+Route::prefix('api')->group(function () {
+    // Auth routes
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::get('/user-profile', [AuthController::class, 'userProfile']);
 
-Route::group([
-    'middleware' => 'auth:api'
-], function ($router) {
-    // Dashboard routes
-    Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
+    Route::middleware('auth:api')->group(function () {
+        // Dashboard routes
+        Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
-    // Perencanaan routes
-    Route::post('/perencanaan', [FormController::class, 'createPerencanaan']);
-    Route::get('/perencanaan/{id}', [FormController::class, 'getPerencanaan']);
-
-    // Implementasi routes
-    Route::post('/implementasi/{perencanaan_id}', [FormController::class, 'createImplementasi']);
-
-    // Monitoring routes
-    Route::post('/monitoring/{implementasi_id}', [FormController::class, 'createMonitoring']);
-
-    // User forms
-    Route::get('/user/forms', [FormController::class, 'getUserForms']);
-
-    Route::post('/upload', [FormController::class, 'uploadDokumentasi']);
+        // Form routes
+        Route::post('/perencanaan', [FormController::class, 'createPerencanaan']);
+        Route::get('/perencanaan/{id}', [FormController::class, 'getPerencanaan']);
+        Route::post('/implementasi/{perencanaan_id}', [FormController::class, 'createImplementasi']);
+        Route::post('/monitoring/{implementasi_id}', [FormController::class, 'createMonitoring']);
+        Route::get('/user/forms', [FormController::class, 'getUserForms']);
+        Route::post('/upload', [FormController::class, 'uploadDokumentasi']);
+    });
 });
-
-// Swagger documentation route
-Route::get('/documentation', function() {
-    return view('swagger.index');
-})->middleware(['auth:api', 'role:admin']);
