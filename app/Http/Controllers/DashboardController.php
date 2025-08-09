@@ -14,6 +14,15 @@ class DashboardController extends Controller
         $this->middleware('auth:api');
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/dashboard/stats",
+     *     tags={"Dashboard"},
+     *     summary="Get dashboard statistics and recent activities",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(response=200, description="Dashboard data")
+     * )
+     */
     public function stats()
     {
         $user = auth()->user();

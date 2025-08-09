@@ -2,20 +2,26 @@
     "openapi": "3.0.0",
     "info": {
         "title": "CCS API Documentation",
-        "description": "Dokumentasi API CCS Project",
+        "description": "Carbon Credit System API",
         "contact": {
-            "email": "admin@ccs.local"
+            "email": "support@ccs.com"
         },
-        "version": "1.0.0"
+        "version": "1.0"
     },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "API Server"
+        }
+    ],
     "paths": {
-        "/api/auth/login": {
+        "/api/login": {
             "post": {
                 "tags": [
-                    "Authentication"
+                    "Auth"
                 ],
                 "summary": "Login user",
-                "operationId": "login",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -28,13 +34,11 @@
                                 "properties": {
                                     "email": {
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
+                                        "format": "email"
                                     },
                                     "password": {
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "password"
+                                        "format": "password"
                                     }
                                 },
                                 "type": "object"
@@ -44,30 +48,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "access_token": {
-                                            "type": "string"
-                                        },
-                                        "token_type": {
-                                            "type": "string",
-                                            "example": "bearer"
-                                        },
-                                        "expires_in": {
-                                            "type": "integer",
-                                            "example": 3600
-                                        },
-                                        "user": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Successful login"
                     },
                     "401": {
                         "description": "Unauthorized"
@@ -75,13 +56,13 @@
                 }
             }
         },
-        "/api/auth/register": {
+        "/api/register": {
             "post": {
                 "tags": [
-                    "Authentication"
+                    "Auth"
                 ],
                 "summary": "Register user",
-                "operationId": "register",
+                "operationId": "8a56853624e025573120a09a4c75d468",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -95,23 +76,19 @@
                                 ],
                                 "properties": {
                                     "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
+                                        "type": "string"
                                     },
                                     "email": {
                                         "type": "string",
-                                        "format": "email",
-                                        "example": "user@example.com"
+                                        "format": "email"
                                     },
                                     "password": {
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "password"
+                                        "format": "password"
                                     },
                                     "password_confirmation": {
                                         "type": "string",
-                                        "format": "password",
-                                        "example": "password"
+                                        "format": "password"
                                     }
                                 },
                                 "type": "object"
@@ -121,23 +98,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "User successfully registered",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User successfully registered"
-                                        },
-                                        "user": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "User registered"
                     },
                     "400": {
                         "description": "Validation error"
@@ -145,108 +106,296 @@
                 }
             }
         },
-        "/api/auth/logout": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Logout user",
-                "operationId": "logout",
-                "responses": {
-                    "200": {
-                        "description": "User successfully signed out",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User successfully signed out"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/auth/refresh": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Refresh JWT token",
-                "operationId": "refresh",
-                "responses": {
-                    "200": {
-                        "description": "Token refreshed",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "access_token": {
-                                            "type": "string"
-                                        },
-                                        "token_type": {
-                                            "type": "string",
-                                            "example": "bearer"
-                                        },
-                                        "expires_in": {
-                                            "type": "integer",
-                                            "example": 3600
-                                        },
-                                        "user": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/auth/user-profile": {
+        "/api/dashboard/stats": {
             "get": {
                 "tags": [
-                    "Authentication"
+                    "Dashboard"
                 ],
-                "summary": "Get user profile",
-                "operationId": "userProfile",
+                "summary": "Get dashboard statistics and recent activities",
+                "operationId": "2d1bd6c9f8fe1cf3f8cafed219f661e0",
                 "responses": {
                     "200": {
-                        "description": "User profile data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "type": "integer"
-                                        },
-                                        "name": {
-                                            "type": "string"
-                                        },
-                                        "email": {
-                                            "type": "string"
-                                        }
+                        "description": "Dashboard data"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/perencanaan": {
+            "post": {
+                "tags": [
+                    "Perencanaan"
+                ],
+                "summary": "Create perencanaan",
+                "operationId": "9eeb5545c55feef7c98f708cb21b04ca",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_perusahaan",
+                                    "nama_pic",
+                                    "narahubung",
+                                    "jenis_kegiatan",
+                                    "lokasi",
+                                    "jumlah_bibit",
+                                    "jenis_bibit",
+                                    "tanggal_pelaksanaan"
+                                ],
+                                "properties": {
+                                    "nama_perusahaan": {
+                                        "type": "string"
                                     },
-                                    "type": "object"
-                                }
+                                    "nama_pic": {
+                                        "type": "string"
+                                    },
+                                    "narahubung": {
+                                        "type": "string"
+                                    },
+                                    "jenis_kegiatan": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Planting Mangrove",
+                                            "Coral Transplanting"
+                                        ]
+                                    },
+                                    "lokasi": {
+                                        "type": "string"
+                                    },
+                                    "jumlah_bibit": {
+                                        "type": "integer"
+                                    },
+                                    "jenis_bibit": {
+                                        "type": "string"
+                                    },
+                                    "tanggal_pelaksanaan": {
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Perencanaan created"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/implementasi/{perencanaan_id}": {
+            "post": {
+                "tags": [
+                    "Implementasi"
+                ],
+                "summary": "Create implementasi",
+                "operationId": "8920588cf9ce23f0dc674f33a0e6d64a",
+                "parameters": [
+                    {
+                        "name": "perencanaan_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nama_perusahaan_sesuai",
+                                    "lokasi_sesuai",
+                                    "jenis_kegiatan_sesuai",
+                                    "jumlah_bibit_sesuai",
+                                    "jenis_bibit_sesuai",
+                                    "tanggal_sesuai",
+                                    "pic_koorlap"
+                                ],
+                                "properties": {
+                                    "nama_perusahaan_sesuai": {
+                                        "type": "boolean"
+                                    },
+                                    "lokasi_sesuai": {
+                                        "type": "boolean"
+                                    },
+                                    "jenis_kegiatan_sesuai": {
+                                        "type": "boolean"
+                                    },
+                                    "jumlah_bibit_sesuai": {
+                                        "type": "boolean"
+                                    },
+                                    "jenis_bibit_sesuai": {
+                                        "type": "boolean"
+                                    },
+                                    "tanggal_sesuai": {
+                                        "type": "boolean"
+                                    },
+                                    "pic_koorlap": {
+                                        "type": "string"
+                                    },
+                                    "dokumentasi_kegiatan": {
+                                        "type": "string"
+                                    },
+                                    "geotagging": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Implementasi created"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/monitoring/{implementasi_id}": {
+            "post": {
+                "tags": [
+                    "Monitoring"
+                ],
+                "summary": "Create monitoring",
+                "operationId": "405ee9e144f61ebf689b2b059a26faaa",
+                "parameters": [
+                    {
+                        "name": "implementasi_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "jumlah_bibit_ditanam",
+                                    "jumlah_bibit_mati",
+                                    "diameter_batang",
+                                    "jumlah_daun",
+                                    "daun_mengering",
+                                    "daun_layu",
+                                    "daun_menguning",
+                                    "bercak_daun",
+                                    "daun_serangga",
+                                    "survival_rate"
+                                ],
+                                "properties": {
+                                    "jumlah_bibit_ditanam": {
+                                        "type": "integer"
+                                    },
+                                    "jumlah_bibit_mati": {
+                                        "type": "integer"
+                                    },
+                                    "diameter_batang": {
+                                        "type": "number"
+                                    },
+                                    "jumlah_daun": {
+                                        "type": "integer"
+                                    },
+                                    "daun_mengering": {
+                                        "type": "string"
+                                    },
+                                    "daun_layu": {
+                                        "type": "string"
+                                    },
+                                    "daun_menguning": {
+                                        "type": "string"
+                                    },
+                                    "bercak_daun": {
+                                        "type": "string"
+                                    },
+                                    "daun_serangga": {
+                                        "type": "string"
+                                    },
+                                    "survival_rate": {
+                                        "type": "number"
+                                    },
+                                    "dokumentasi_monitoring": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Monitoring created"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/upload": {
+            "post": {
+                "tags": [
+                    "Dokumentasi"
+                ],
+                "summary": "Upload dokumentasi file",
+                "operationId": "6d5892f70ddd69c0e1d840c21b75f671",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "File uploaded"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -257,10 +406,39 @@
             }
         }
     },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
+            }
+        }
+    },
     "tags": [
         {
-            "name": "Authentication",
-            "description": "API Endpoints for Authentication"
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Dashboard",
+            "description": "Dashboard"
+        },
+        {
+            "name": "Perencanaan",
+            "description": "Perencanaan"
+        },
+        {
+            "name": "Implementasi",
+            "description": "Implementasi"
+        },
+        {
+            "name": "Monitoring",
+            "description": "Monitoring"
+        },
+        {
+            "name": "Dokumentasi",
+            "description": "Dokumentasi"
         }
     ]
 }

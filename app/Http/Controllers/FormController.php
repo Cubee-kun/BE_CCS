@@ -15,7 +15,30 @@ class FormController extends Controller
         $this->middleware('auth:api');
     }
 
-    // Perencanaan Methods
+    /**
+     * @OA\Post(
+     *     path="/api/perencanaan",
+     *     tags={"Perencanaan"},
+     *     summary="Create perencanaan",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nama_perusahaan","nama_pic","narahubung","jenis_kegiatan","lokasi","jumlah_bibit","jenis_bibit","tanggal_pelaksanaan"},
+     *             @OA\Property(property="nama_perusahaan", type="string"),
+     *             @OA\Property(property="nama_pic", type="string"),
+     *             @OA\Property(property="narahubung", type="string"),
+     *             @OA\Property(property="jenis_kegiatan", type="string", enum={"Planting Mangrove","Coral Transplanting"}),
+     *             @OA\Property(property="lokasi", type="string"),
+     *             @OA\Property(property="jumlah_bibit", type="integer"),
+     *             @OA\Property(property="jenis_bibit", type="string"),
+     *             @OA\Property(property="tanggal_pelaksanaan", type="string", format="date")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Perencanaan created"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
     public function createPerencanaan(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -57,7 +80,37 @@ class FormController extends Controller
         return response()->json($perencanaan);
     }
 
-    // Implementasi Methods
+    /**
+     * @OA\Post(
+     *     path="/api/implementasi/{perencanaan_id}",
+     *     tags={"Implementasi"},
+     *     summary="Create implementasi",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="perencanaan_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"nama_perusahaan_sesuai","lokasi_sesuai","jenis_kegiatan_sesuai","jumlah_bibit_sesuai","jenis_bibit_sesuai","tanggal_sesuai","pic_koorlap"},
+     *             @OA\Property(property="nama_perusahaan_sesuai", type="boolean"),
+     *             @OA\Property(property="lokasi_sesuai", type="boolean"),
+     *             @OA\Property(property="jenis_kegiatan_sesuai", type="boolean"),
+     *             @OA\Property(property="jumlah_bibit_sesuai", type="boolean"),
+     *             @OA\Property(property="jenis_bibit_sesuai", type="boolean"),
+     *             @OA\Property(property="tanggal_sesuai", type="boolean"),
+     *             @OA\Property(property="pic_koorlap", type="string"),
+     *             @OA\Property(property="dokumentasi_kegiatan", type="string"),
+     *             @OA\Property(property="geotagging", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Implementasi created"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
     public function createImplementasi(Request $request, $perencanaan_id)
     {
         $validator = Validator::make($request->all(), [
@@ -95,7 +148,39 @@ class FormController extends Controller
         ], 201);
     }
 
-    // Monitoring Methods
+    /**
+     * @OA\Post(
+     *     path="/api/monitoring/{implementasi_id}",
+     *     tags={"Monitoring"},
+     *     summary="Create monitoring",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="implementasi_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"jumlah_bibit_ditanam","jumlah_bibit_mati","diameter_batang","jumlah_daun","daun_mengering","daun_layu","daun_menguning","bercak_daun","daun_serangga","survival_rate"},
+     *             @OA\Property(property="jumlah_bibit_ditanam", type="integer"),
+     *             @OA\Property(property="jumlah_bibit_mati", type="integer"),
+     *             @OA\Property(property="diameter_batang", type="number"),
+     *             @OA\Property(property="jumlah_daun", type="integer"),
+     *             @OA\Property(property="daun_mengering", type="string"),
+     *             @OA\Property(property="daun_layu", type="string"),
+     *             @OA\Property(property="daun_menguning", type="string"),
+     *             @OA\Property(property="bercak_daun", type="string"),
+     *             @OA\Property(property="daun_serangga", type="string"),
+     *             @OA\Property(property="survival_rate", type="number"),
+     *             @OA\Property(property="dokumentasi_monitoring", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Monitoring created"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
     public function createMonitoring(Request $request, $implementasi_id)
     {
         $validator = Validator::make($request->all(), [
@@ -149,6 +234,25 @@ class FormController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/api/upload",
+     *     tags={"Dokumentasi"},
+     *     summary="Upload dokumentasi file",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="file", type="string", format="binary")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="File uploaded"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
     public function uploadDokumentasi(Request $request)
     {
         $validator = Validator::make($request->all(), [
