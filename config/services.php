@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'blockchain' => [
+        'url' => env('BLOCKCHAIN_API_URL'),
+        'key' => env('BLOCKCHAIN_API_KEY'),
+    ],
+
 ];

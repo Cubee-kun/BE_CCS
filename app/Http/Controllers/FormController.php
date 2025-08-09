@@ -5,11 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Perencanaan;
 use App\Models\Implementasi;
-use App\Http\Resources\FormResource;
-use Validator;
+use App\Models\Monitoring;
+use Illuminate\Support\Facades\Validator;
 
 class FormController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
+    // Perencanaan Methods
     public function createPerencanaan(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -29,19 +35,32 @@ class FormController extends Controller
 
         $perencanaan = Perencanaan::create([
             'user_id' => auth()->id(),
-            ...$validator->validated()
+            'nama_perusahaan' => $request->nama_perusahaan,
+            'nama_pic' => $request->nama_pic,
+            'narahubung' => $request->narahubung,
+            'jenis_kegiatan' => $request->jenis_kegiatan,
+            'lokasi' => $request->lokasi,
+            'jumlah_bibit' => $request->jumlah_bibit,
+            'jenis_bibit' => $request->jenis_bibit,
+            'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
         ]);
 
         return response()->json([
             'message' => 'Perencanaan created successfully',
-            'data' => new FormResource($perencanaan)
+            'perencanaan' => $perencanaan
         ], 201);
     }
 
-    public function createImplementasi(Request $request)
+    public function getPerencanaan($id)
+    {
+        $perencanaan = Perencanaan::where('user_id', auth()->id())->findOrFail($id);
+        return response()->json($perencanaan);
+    }
+
+    // Implementasi Methods
+    public function createImplementasi(Request $request, $perencanaan_id)
     {
         $validator = Validator::make($request->all(), [
-            'perencanaan_id' => 'required|exists:perencanaans,id',
             'nama_perusahaan_sesuai' => 'required|boolean',
             'lokasi_sesuai' => 'required|boolean',
             'jenis_kegiatan_sesuai' => 'required|boolean',
@@ -49,35 +68,107 @@ class FormController extends Controller
             'jenis_bibit_sesuai' => 'required|boolean',
             'tanggal_sesuai' => 'required|boolean',
             'pic_koorlap' => 'required|string',
-            'dokumentasi_kegiatan' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'geotagging' => 'required|string', // JSON string for coordinates
+            'dokumentasi_kegiatan' => 'nullable|string',
+            'geotagging' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $data = $validator->validated();
-
-        // Handle file upload
-        $dokumentasiPath = $request->file('dokumentasi_kegiatan')->store('dokumentasi', 'public');
-
         $implementasi = Implementasi::create([
-            'perencanaan_id' => $data['perencanaan_id'],
-            'nama_perusahaan_sesuai' => $data['nama_perusahaan_sesuai'],
-            'lokasi_sesuai' => $data['lokasi_sesuai'],
-            'jenis_kegiatan_sesuai' => $data['jenis_kegiatan_sesuai'],
-            'jumlah_bibit_sesuai' => $data['jumlah_bibit_sesuai'],
-            'jenis_bibit_sesuai' => $data['jenis_bibit_sesuai'],
-            'tanggal_sesuai' => $data['tanggal_sesuai'],
-            'pic_koorlap' => $data['pic_koorlap'],
-            'dokumentasi_kegiatan_path' => $dokumentasiPath,
-            'geotagging_path' => $data['geotagging'],
+            'perencanaan_id' => $perencanaan_id,
+            'nama_perusahaan_sesuai' => $request->nama_perusahaan_sesuai,
+            'lokasi_sesuai' => $request->lokasi_sesuai,
+            'jenis_kegiatan_sesuai' => $request->jenis_kegiatan_sesuai,
+            'jumlah_bibit_sesuai' => $request->jumlah_bibit_sesuai,
+            'jenis_bibit_sesuai' => $request->jenis_bibit_sesuai,
+            'tanggal_sesuai' => $request->tanggal_sesuai,
+            'pic_koorlap' => $request->pic_koorlap,
+            'dokumentasi_kegiatan' => $request->dokumentasi_kegiatan,
+            'geotagging' => $request->geotagging,
         ]);
 
         return response()->json([
             'message' => 'Implementasi created successfully',
-            'data' => new FormResource($implementasi)
+            'implementasi' => $implementasi
         ], 201);
+    }
+
+    // Monitoring Methods
+    public function createMonitoring(Request $request, $implementasi_id)
+    {
+        $validator = Validator::make($request->all(), [
+            'jumlah_bibit_ditanam' => 'required|integer',
+            'jumlah_bibit_mati' => 'required|integer',
+            'diameter_batang' => 'required|numeric',
+            'jumlah_daun' => 'required|integer',
+            'daun_mengering' => 'required|in:<25%,25–45%,50–74%,>75%',
+            'daun_layu' => 'required|in:<25%,25–45%,50–74%,>75%',
+            'daun_menguning' => 'required|in:<25%,25–45%,50–74%,>75%',
+            'bercak_daun' => 'required|in:<25%,25–45%,50–74%,>75%',
+            'daun_serangga' => 'required|in:<25%,25–45%,50–74%,>75%',
+            'survival_rate' => 'required|numeric|between:0,100',
+            'dokumentasi_monitoring' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $monitoring = Monitoring::create([
+            'implementasi_id' => $implementasi_id,
+            'jumlah_bibit_ditanam' => $request->jumlah_bibit_ditanam,
+            'jumlah_bibit_mati' => $request->jumlah_bibit_mati,
+            'diameter_batang' => $request->diameter_batang,
+            'jumlah_daun' => $request->jumlah_daun,
+            'daun_mengering' => $request->daun_mengering,
+            'daun_layu' => $request->daun_layu,
+            'daun_menguning' => $request->daun_menguning,
+            'bercak_daun' => $request->bercak_daun,
+            'daun_serangga' => $request->daun_serangga,
+            'survival_rate' => $request->survival_rate,
+            'dokumentasi_monitoring' => $request->dokumentasi_monitoring,
+        ]);
+
+        return response()->json([
+            'message' => 'Monitoring created successfully',
+            'monitoring' => $monitoring
+        ], 201);
+    }
+
+    // Dashboard Methods
+    public function getUserForms()
+    {
+        $user = auth()->user();
+        $perencanaan = Perencanaan::where('user_id', $user->id)->with('implementasi.monitoring')->get();
+
+        return response()->json([
+            'user' => $user,
+            'forms' => $perencanaan
+        ]);
+    }
+
+    public function uploadDokumentasi(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('public/dokumentasi');
+            $url = Storage::url($path);
+
+            return response()->json([
+                'message' => 'File uploaded successfully',
+                'path' => $url
+            ], 200);
+        }
+
+        return response()->json(['message' => 'File upload failed'], 400);
     }
 }

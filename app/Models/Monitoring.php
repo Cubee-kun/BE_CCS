@@ -2,18 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Monitoring extends Model
 {
-    protected $fillable = [
-        'implementasi_id', 'jumlah_bibit_ditanam', 'jumlah_bibit_mati',
-        'diameter_batang', 'jumlah_daun', 'survival_rate',
-        'dokumentasi_monitoring_path'
-    ];
+    use HasFactory;
 
-    protected $casts = [
-        'survival_rate' => 'array'
+    protected $fillable = [
+        'implementasi_id',
+        'jumlah_bibit_ditanam',
+        'jumlah_bibit_mati',
+        'diameter_batang',
+        'jumlah_daun',
+        'daun_mengering',
+        'daun_layu',
+        'daun_menguning',
+        'bercak_daun',
+        'daun_serangga',
+        'survival_rate',
+        'dokumentasi_monitoring',
     ];
 
     public function implementasi()
