@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\LaporanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,4 +51,8 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{user}', [UserController::class, 'update'])->middleware('can:update,user');
         Route::delete('/{user}', [UserController::class, 'destroy'])->middleware('can:delete,user');
     });
+
+    Route::get('/laporan', [LaporanController::class, 'index']);
+    Route::get('/laporan/{id}', [LaporanController::class, 'show']);
+    Route::get('/laporan/cetak', [LaporanController::class, 'cetak']);
 });

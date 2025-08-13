@@ -6,7 +6,7 @@ return [
         'logout',
         'register',
         'documentation',
-        'sanctum/csrf-cookie',
+        // 'sanctum/csrf-cookie',
     ],
 
     'allowed_methods' => ['*'],
