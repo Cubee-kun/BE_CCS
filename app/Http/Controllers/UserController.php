@@ -40,8 +40,9 @@ class UserController extends Controller
      *     @OA\Response(response=200, description="User detail")
      * )
      */
-    public function show(User $user)
+    public function show($id)
     {
+        $user = User::findOrFail($id);
         $this->authorize('view', $user);
         return response()->json($user);
     }
@@ -106,8 +107,9 @@ class UserController extends Controller
      *     @OA\Response(response=200, description="User updated")
      * )
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
+        $user = User::findOrFail($id);
         $this->authorize('update', $user);
 
         $validated = $request->validate([
@@ -141,8 +143,9 @@ class UserController extends Controller
      *     @OA\Response(response=200, description="User deleted")
      * )
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
+        $user = User::findOrFail($id);
         $this->authorize('delete', $user);
         $user->delete();
 

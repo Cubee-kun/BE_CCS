@@ -19,6 +19,8 @@ return new class extends Migration
             $table->integer('jumlah_bibit');
             $table->string('jenis_bibit');
             $table->date('tanggal_pelaksanaan');
+            $table->string('lat');
+            $table->string('long');
             $table->timestamps();
         });
     }

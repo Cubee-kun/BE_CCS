@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
+// use Illuminate\Http\Middleware\JwtMiddleware;
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -19,7 +20,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->group('api', [
             HandleCors::class,
-            // ...middleware lain...
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -19,7 +19,8 @@ return new class extends Migration
             $table->boolean('tanggal_sesuai')->default(false);
             $table->string('pic_koorlap');
             $table->string('dokumentasi_kegiatan')->nullable();
-            $table->string('geotagging')->nullable();
+            $table->string('lat');
+            $table->string('long');
             $table->timestamps();
         });
     }
