@@ -20,10 +20,18 @@ class Implementasi extends Model
         'pic_koorlap',
         'dokumentasi_kegiatan',
         'geotagging',
+        'lat',
+        'long',
     ];
 
     public function perencanaan()
     {
         return $this->belongsTo(Perencanaan::class);
+    }
+
+    // Tambahkan di app/Models/Implementasi.php
+    public function monitoring()
+    {
+        return $this->hasOne(Monitoring::class);
     }
 }

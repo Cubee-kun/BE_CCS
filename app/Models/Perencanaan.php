@@ -19,10 +19,18 @@ class Perencanaan extends Model
         'jumlah_bibit',
         'jenis_bibit',
         'tanggal_pelaksanaan',
+        'lat',
+        'long',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // Tambahkan di app/Models/Perencanaan.php
+    public function implementasi()
+    {
+        return $this->hasOne(Implementasi::class);
     }
 }

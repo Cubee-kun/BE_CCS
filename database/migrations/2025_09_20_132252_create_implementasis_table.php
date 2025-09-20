@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
         Schema::create('implementasis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('perencanaan_id')->constrained();
+            $table->foreignId('perencanaan_id')->constrained()->onDelete('cascade');
             $table->boolean('nama_perusahaan_sesuai')->default(false);
             $table->boolean('lokasi_sesuai')->default(false);
             $table->boolean('jenis_kegiatan_sesuai')->default(false);
@@ -21,16 +18,15 @@ return new class extends Migration
             $table->boolean('jenis_bibit_sesuai')->default(false);
             $table->boolean('tanggal_sesuai')->default(false);
             $table->string('pic_koorlap');
-            $table->string('dokumentasi_kegiatan_path');
+            $table->string('dokumentasi_kegiatan')->nullable();
             $table->string('geotagging_path');
+            $table->string('lat');
+            $table->string('long');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('implementasis');
     }
