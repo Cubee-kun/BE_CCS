@@ -7,6 +7,7 @@ use App\Http\Controllers\FormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\EvaluasiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,4 +56,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index']);
     Route::get('/laporan/{id}', [LaporanController::class, 'show']);
     Route::get('/laporan/cetak', [LaporanController::class, 'cetak']);
+
+    Route::apiResource('evaluasi', EvaluasiController::class);
 });
