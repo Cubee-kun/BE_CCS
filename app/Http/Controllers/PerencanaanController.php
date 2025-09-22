@@ -4,55 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Perencanaan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PerencanaanController extends Controller
 {
     /**
-     * @OA\Get(
-     *     path="/api/perencanaan",
-     *     tags={"Perencanaan"},
-     *     summary="Ambil semua data perencanaan",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="List perencanaan",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Perencanaan"))
-     *     ),
-     *     @OA\Response(response=401, description="Unauthorized")
-     * )
-     */
-    public function index()
-    {
-        return response()->json(Perencanaan::all());
-    }
-
-    /**
      * @OA\Post(
-     *     path="/api/perencanaan",
-     *     tags={"Perencanaan"},
-     *     summary="Tambah data perencanaan baru",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Perencanaan berhasil dibuat",
-     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
-     *     ),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=422, description="Validation error")
+     *   path="/api/perencanaan",
+     *   tags={"Perencanaan"},
+     *   summary="Create perencanaan",
+     *   security={{"bearerAuth":{}}},
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\JsonContent(ref="#/components/schemas/Perencanaan")
+     *   ),
+     *   @OA\Response(response=201, description="Perencanaan created"),
+     *   @OA\Response(response=422, description="Validation error")
      * )
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+        $validator = Validator::make($request->all(), [
             'nama_perusahaan' => 'required|string',
             'nama_pic' => 'required|string',
             'narahubung' => 'required|string',
-            'jenis_kegiatan' => 'required|string',
+            'jenis_kegiatan' => 'required|in:Planting Mangrove,Coral Transplanting',
             'lokasi' => 'required|string',
             'jumlah_bibit' => 'required|integer',
             'jenis_bibit' => 'required|string',
@@ -61,111 +37,49 @@ class PerencanaanController extends Controller
             'long' => 'required|string',
         ]);
 
-        $perencanaan = Perencanaan::create($validated);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
 
-        return response()->json($perencanaan, 201);
+        $perencanaan = Perencanaan::create([
+            'user_id' => auth()->id(),
+            'nama_perusahaan' => $request->nama_perusahaan,
+            'nama_pic' => $request->nama_pic,
+            'narahubung' => $request->narahubung,
+            'jenis_kegiatan' => $request->jenis_kegiatan,
+            'lokasi' => $request->lokasi,
+            'jumlah_bibit' => $request->jumlah_bibit,
+            'jenis_bibit' => $request->jenis_bibit,
+            'tanggal_pelaksanaan' => $request->tanggal_pelaksanaan,
+            'lat' => $request->lat,
+            'long' => $request->long,
+        ]);
+
+        return response()->json([
+            'message' => 'Perencanaan created successfully',
+            'perencanaan' => $perencanaan
+        ], 201);
     }
 
     /**
      * @OA\Get(
-     *     path="/api/perencanaan/{id}",
-     *     tags={"Perencanaan"},
-     *     summary="Ambil detail perencanaan berdasarkan ID",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID perencanaan",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Detail perencanaan",
-     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
-     *     ),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Data tidak ditemukan")
+     *   path="/api/perencanaan/{id}",
+     *   tags={"Perencanaan"},
+     *   summary="Get perencanaan by ID",
+     *   security={{"bearerAuth":{}}},
+     *   @OA\Parameter(
+     *     name="id",
+     *     in="path",
+     *     required=true,
+     *     @OA\Schema(type="integer")
+     *   ),
+     *   @OA\Response(response=200, description="Success"),
+     *   @OA\Response(response=404, description="Not found")
      * )
      */
     public function show($id)
     {
-        $perencanaan = Perencanaan::findOrFail($id);
+        $perencanaan = Perencanaan::where('user_id', auth()->id())->findOrFail($id);
         return response()->json($perencanaan);
-    }
-
-    /**
-     * @OA\Put(
-     *     path="/api/perencanaan/{id}",
-     *     tags={"Perencanaan"},
-     *     summary="Update perencanaan berdasarkan ID",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID perencanaan",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Perencanaan berhasil diperbarui",
-     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
-     *     ),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Data tidak ditemukan"),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
-     */
-    public function update(Request $request, $id)
-    {
-        $perencanaan = Perencanaan::findOrFail($id);
-
-        $validated = $request->validate([
-            'nama_perusahaan' => 'sometimes|string',
-            'nama_pic' => 'sometimes|string',
-            'narahubung' => 'sometimes|string',
-            'jenis_kegiatan' => 'sometimes|string',
-            'lokasi' => 'sometimes|string',
-            'jumlah_bibit' => 'sometimes|integer',
-            'jenis_bibit' => 'sometimes|string',
-            'tanggal_pelaksanaan' => 'sometimes|date',
-            'lat' => 'sometimes|string',
-            'long' => 'sometimes|string',
-        ]);
-
-        $perencanaan->update($validated);
-
-        return response()->json($perencanaan);
-    }
-
-    /**
-     * @OA\Delete(
-     *     path="/api/perencanaan/{id}",
-     *     tags={"Perencanaan"},
-     *     summary="Hapus perencanaan berdasarkan ID",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         required=true,
-     *         description="ID perencanaan",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Response(response=200, description="Perencanaan berhasil dihapus"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=404, description="Data tidak ditemukan")
-     * )
-     */
-    public function destroy($id)
-    {
-        $perencanaan = Perencanaan::findOrFail($id);
-        $perencanaan->delete();
-
-        return response()->json(['message' => 'Perencanaan deleted']);
     }
 }

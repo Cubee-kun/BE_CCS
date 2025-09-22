@@ -182,6 +182,47 @@
                 ]
             }
         },
+        "/api/upload": {
+            "post": {
+                "tags": [
+                    "Dokumentasi"
+                ],
+                "summary": "Upload dokumentasi file",
+                "operationId": "4ce59d5c7fa7313b2fb4ea28e300c746",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "File uploaded"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/evaluasi": {
             "get": {
                 "tags": [
@@ -408,88 +449,29 @@
                 ]
             }
         },
-        "/api/implementasi": {
-            "get": {
-                "tags": [
-                    "Implementasi"
-                ],
-                "summary": "Get all implementasi",
-                "operationId": "f9ffaf8a2ff7d12cd14081dc8c889fa5",
-                "responses": {
-                    "200": {
-                        "description": "List of implementasi",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {}
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
+        "/api/implementasi/{perencanaan_id}": {
             "post": {
                 "tags": [
                     "Implementasi"
                 ],
                 "summary": "Create implementasi",
-                "operationId": "5bba7f6bbc26ae51e05573f3decb3957",
+                "operationId": "47f78c62a84578e449a252a4c865e345",
+                "parameters": [
+                    {
+                        "name": "perencanaan_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "required": [
-                                    "perencanaan_id",
-                                    "pic_koorlap",
-                                    "lat",
-                                    "long"
-                                ],
-                                "properties": {
-                                    "perencanaan_id": {
-                                        "type": "integer"
-                                    },
-                                    "nama_perusahaan_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "lokasi_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "jenis_kegiatan_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "jumlah_bibit_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "jenis_bibit_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "tanggal_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "pic_koorlap": {
-                                        "type": "string"
-                                    },
-                                    "dokumentasi_kegiatan": {
-                                        "type": "string"
-                                    },
-                                    "geotagging": {
-                                        "type": "string"
-                                    },
-                                    "lat": {
-                                        "type": "string"
-                                    },
-                                    "long": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
+                                "$ref": "#/components/schemas/Implementasi"
                             }
                         }
                     }
@@ -497,134 +479,9 @@
                 "responses": {
                     "201": {
                         "description": "Implementasi created"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/implementasi/{id}": {
-            "get": {
-                "tags": [
-                    "Implementasi"
-                ],
-                "summary": "Get implementasi by ID",
-                "operationId": "7a352d9b342f073bbd8b5b455dbd98ea",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Implementasi detail"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Implementasi"
-                ],
-                "summary": "Update implementasi by ID",
-                "operationId": "83eb9c145819f253838b6c45ee52a240",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "nama_perusahaan_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "lokasi_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "jenis_kegiatan_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "jumlah_bibit_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "jenis_bibit_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "tanggal_sesuai": {
-                                        "type": "boolean"
-                                    },
-                                    "pic_koorlap": {
-                                        "type": "string"
-                                    },
-                                    "dokumentasi_kegiatan": {
-                                        "type": "string"
-                                    },
-                                    "geotagging": {
-                                        "type": "string"
-                                    },
-                                    "lat": {
-                                        "type": "string"
-                                    },
-                                    "long": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Implementasi updated"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Implementasi"
-                ],
-                "summary": "Delete implementasi by ID",
-                "operationId": "49a71d64f60c04761ae1b15040b794de",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Implementasi deleted"
+                    },
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -728,29 +585,39 @@
                 ]
             }
         },
-        "/api/perencanaan": {
-            "get": {
+        "/api/monitoring/{implementasi_id}": {
+            "post": {
                 "tags": [
-                    "Perencanaan"
+                    "Monitoring"
                 ],
-                "summary": "Ambil semua data perencanaan",
-                "operationId": "2b7835312bb616094733f1f839607ce1",
-                "responses": {
-                    "200": {
-                        "description": "List perencanaan",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Perencanaan"
-                                    }
-                                }
+                "summary": "Create monitoring",
+                "operationId": "906aa71b85985e2c7024e47996515325",
+                "parameters": [
+                    {
+                        "name": "implementasi_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Monitoring"
                             }
                         }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Monitoring created"
                     },
-                    "401": {
-                        "description": "Unauthorized"
+                    "422": {
+                        "description": "Validation error"
                     }
                 },
                 "security": [
@@ -758,12 +625,14 @@
                         "bearerAuth": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/perencanaan": {
             "post": {
                 "tags": [
                     "Perencanaan"
                 ],
-                "summary": "Tambah data perencanaan baru",
+                "summary": "Create perencanaan",
                 "operationId": "363dbaa2653e8adeb74a852cfaf91bf9",
                 "requestBody": {
                     "required": true,
@@ -777,17 +646,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Perencanaan berhasil dibuat",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Perencanaan"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
+                        "description": "Perencanaan created"
                     },
                     "422": {
                         "description": "Validation error"
@@ -805,126 +664,24 @@
                 "tags": [
                     "Perencanaan"
                 ],
-                "summary": "Ambil detail perencanaan berdasarkan ID",
+                "summary": "Get perencanaan by ID",
                 "operationId": "564d3b593ccf28620202179d3719ed16",
                 "parameters": [
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "ID perencanaan",
                         "required": true,
                         "schema": {
-                            "type": "integer",
-                            "example": 1
+                            "type": "integer"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Detail perencanaan",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Perencanaan"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
+                        "description": "Success"
                     },
                     "404": {
-                        "description": "Data tidak ditemukan"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Perencanaan"
-                ],
-                "summary": "Update perencanaan berdasarkan ID",
-                "operationId": "9df574e751d806691be2bf50403fc425",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID perencanaan",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Perencanaan"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Perencanaan berhasil diperbarui",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Perencanaan"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Data tidak ditemukan"
-                    },
-                    "422": {
-                        "description": "Validation error"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Perencanaan"
-                ],
-                "summary": "Hapus perencanaan berdasarkan ID",
-                "operationId": "8d7ebc9bd6f0dcec102546d2fd8ef7e6",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID perencanaan",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Perencanaan berhasil dihapus"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Data tidak ditemukan"
+                        "description": "Not found"
                     }
                 },
                 "security": [
@@ -1163,6 +920,176 @@
                 },
                 "type": "object"
             },
+            "Implementasi": {
+                "required": [
+                    "perencanaan_id",
+                    "nama_perusahaan_sesuai",
+                    "lokasi_sesuai",
+                    "jenis_kegiatan_sesuai",
+                    "jumlah_bibit_sesuai",
+                    "jenis_bibit_sesuai",
+                    "tanggal_sesuai",
+                    "pic_koorlap"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "perencanaan_id": {
+                        "description": "ID dari perencanaan terkait",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "nama_perusahaan_sesuai": {
+                        "type": "string",
+                        "example": "PT Hijau Lestari"
+                    },
+                    "lokasi_sesuai": {
+                        "type": "string",
+                        "example": "Kecamatan Sukamaju, Kabupaten Bandung"
+                    },
+                    "jenis_kegiatan_sesuai": {
+                        "type": "string",
+                        "example": "Penanaman Pohon"
+                    },
+                    "jumlah_bibit_sesuai": {
+                        "type": "integer",
+                        "example": 1000
+                    },
+                    "jenis_bibit_sesuai": {
+                        "type": "string",
+                        "example": "Mahoni"
+                    },
+                    "tanggal_sesuai": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2025-09-16"
+                    },
+                    "pic_koorlap": {
+                        "type": "string",
+                        "example": "Budi Santoso"
+                    },
+                    "dokumentasi_kegiatan": {
+                        "type": "string",
+                        "format": "binary",
+                        "example": "dokumen.jpg"
+                    },
+                    "geotagging": {
+                        "type": "string",
+                        "example": "https://maps.google.com/?q=-6.917464,107.619123"
+                    },
+                    "lat": {
+                        "type": "number",
+                        "format": "float",
+                        "example": -6.917464
+                    },
+                    "long": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 107.619123
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-16T12:34:56Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-16T12:34:56Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Monitoring": {
+                "required": [
+                    "implementasi_id",
+                    "jumlah_bibit_ditanam",
+                    "jumlah_bibit_mati",
+                    "diameter_batang",
+                    "jumlah_daun"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "implementasi_id": {
+                        "description": "ID implementasi terkait",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "jumlah_bibit_ditanam": {
+                        "description": "Jumlah bibit yang berhasil ditanam",
+                        "type": "integer",
+                        "example": 950
+                    },
+                    "jumlah_bibit_mati": {
+                        "description": "Jumlah bibit yang mati",
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "diameter_batang": {
+                        "description": "Diameter batang dalam cm",
+                        "type": "number",
+                        "format": "float",
+                        "example": 2.5
+                    },
+                    "jumlah_daun": {
+                        "description": "Jumlah rata-rata daun",
+                        "type": "integer",
+                        "example": 200
+                    },
+                    "daun_mengering": {
+                        "description": "Jumlah bibit dengan daun mengering",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "daun_layu": {
+                        "description": "Jumlah bibit dengan daun layu",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "daun_menguning": {
+                        "description": "Jumlah bibit dengan daun menguning",
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "bercak_daun": {
+                        "description": "Jumlah bibit dengan bercak pada daun",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "daun_serangga": {
+                        "description": "Jumlah bibit yang terserang serangga",
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "survival_rate": {
+                        "description": "Persentase tingkat kelangsungan hidup bibit",
+                        "type": "number",
+                        "format": "float",
+                        "example": 95
+                    },
+                    "dokumentasi_monitoring": {
+                        "type": "string",
+                        "format": "binary",
+                        "example": "monitoring.jpg"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-16T12:34:56Z"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-09-16T12:34:56Z"
+                    }
+                },
+                "type": "object"
+            },
             "Perencanaan": {
                 "title": "Perencanaan",
                 "description": "Schema untuk data Perencanaan",
@@ -1248,6 +1175,10 @@
             "description": "Dashboard"
         },
         {
+            "name": "Dokumentasi",
+            "description": "Dokumentasi"
+        },
+        {
             "name": "Evaluasi",
             "description": "Evaluasi"
         },
@@ -1258,6 +1189,10 @@
         {
             "name": "Laporan",
             "description": "Laporan"
+        },
+        {
+            "name": "Monitoring",
+            "description": "Monitoring"
         },
         {
             "name": "Perencanaan",

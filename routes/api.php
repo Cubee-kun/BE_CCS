@@ -2,11 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\FormController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\EvaluasiController;
+use App\Http\Controllers\DokumentasiController;
+use App\Http\Controllers\PerencanaanController;
+use App\Http\Controllers\ImplementasiController;
+use App\Http\Controllers\MonitoringController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,15 +39,18 @@ Route::middleware('auth:api')->group(function () {
     // Dashboard routes
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
-    // Form routes
-    Route::prefix('forms')->group(function () {
-        Route::post('/perencanaan', [FormController::class, 'createPerencanaan']);
-        Route::get('/perencanaan/{id}', [FormController::class, 'getPerencanaan']);
-        Route::post('/implementasi/{perencanaan_id}', [FormController::class, 'createImplementasi']);
-        Route::post('/monitoring/{implementasi_id}', [FormController::class, 'createMonitoring']);
-        Route::get('/user', [FormController::class, 'getUserForms']);
-        Route::post('/upload', [FormController::class, 'uploadDokumentasi']);
-    });
+    // Perencanaan
+    Route::post('/perencanaan', [PerencanaanController::class, 'store']);
+    Route::get('/perencanaan/{id}', [PerencanaanController::class, 'show']);
+
+    // Implementasi
+    Route::post('/implementasi/{perencanaan_id}', [ImplementasiController::class, 'store']);
+
+    // Monitoring
+    Route::post('/monitoring/{implementasi_id}', [MonitoringController::class, 'store']);
+
+    // Dokumentasi
+    Route::post('/upload', [DokumentasiController::class, 'upload']);
 
     // User management routes (admin only, gunakan policy / gate)
     Route::prefix('users')->group(function () {
