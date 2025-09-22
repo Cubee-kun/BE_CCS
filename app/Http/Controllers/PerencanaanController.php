@@ -11,13 +11,14 @@ class PerencanaanController extends Controller
      * @OA\Get(
      *     path="/api/perencanaan",
      *     tags={"Perencanaan"},
-     *     summary="Get all perencanaan",
+     *     summary="Ambil semua data perencanaan",
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="List of perencanaan",
-     *         @OA\JsonContent(type="array", @OA\Items())
-     *     )
+     *         description="List perencanaan",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Perencanaan"))
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized")
      * )
      */
     public function index()
@@ -29,26 +30,19 @@ class PerencanaanController extends Controller
      * @OA\Post(
      *     path="/api/perencanaan",
      *     tags={"Perencanaan"},
-     *     summary="Create perencanaan",
+     *     summary="Tambah data perencanaan baru",
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             required={"user_id","nama_perusahaan","nama_pic","narahubung","jenis_kegiatan","lokasi","jumlah_bibit","jenis_bibit","tanggal_pelaksanaan","lat","long"},
-     *             @OA\Property(property="user_id", type="integer"),
-     *             @OA\Property(property="nama_perusahaan", type="string"),
-     *             @OA\Property(property="nama_pic", type="string"),
-     *             @OA\Property(property="narahubung", type="string"),
-     *             @OA\Property(property="jenis_kegiatan", type="string"),
-     *             @OA\Property(property="lokasi", type="string"),
-     *             @OA\Property(property="jumlah_bibit", type="integer"),
-     *             @OA\Property(property="jenis_bibit", type="string"),
-     *             @OA\Property(property="tanggal_pelaksanaan", type="string", format="date"),
-     *             @OA\Property(property="lat", type="string"),
-     *             @OA\Property(property="long", type="string")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
      *     ),
-     *     @OA\Response(response=201, description="Perencanaan created")
+     *     @OA\Response(
+     *         response=201,
+     *         description="Perencanaan berhasil dibuat",
+     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=422, description="Validation error")
      * )
      */
     public function store(Request $request)
@@ -76,15 +70,22 @@ class PerencanaanController extends Controller
      * @OA\Get(
      *     path="/api/perencanaan/{id}",
      *     tags={"Perencanaan"},
-     *     summary="Get perencanaan by ID",
+     *     summary="Ambil detail perencanaan berdasarkan ID",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="ID perencanaan",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
-     *     @OA\Response(response=200, description="Perencanaan detail")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Detail perencanaan",
+     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Data tidak ditemukan")
      * )
      */
     public function show($id)
@@ -97,30 +98,27 @@ class PerencanaanController extends Controller
      * @OA\Put(
      *     path="/api/perencanaan/{id}",
      *     tags={"Perencanaan"},
-     *     summary="Update perencanaan by ID",
+     *     summary="Update perencanaan berdasarkan ID",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="ID perencanaan",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="nama_perusahaan", type="string"),
-     *             @OA\Property(property="nama_pic", type="string"),
-     *             @OA\Property(property="narahubung", type="string"),
-     *             @OA\Property(property="jenis_kegiatan", type="string"),
-     *             @OA\Property(property="lokasi", type="string"),
-     *             @OA\Property(property="jumlah_bibit", type="integer"),
-     *             @OA\Property(property="jenis_bibit", type="string"),
-     *             @OA\Property(property="tanggal_pelaksanaan", type="string", format="date"),
-     *             @OA\Property(property="lat", type="string"),
-     *             @OA\Property(property="long", type="string")
-     *         )
+     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
      *     ),
-     *     @OA\Response(response=200, description="Perencanaan updated")
+     *     @OA\Response(
+     *         response=200,
+     *         description="Perencanaan berhasil diperbarui",
+     *         @OA\JsonContent(ref="#/components/schemas/Perencanaan")
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Data tidak ditemukan"),
+     *     @OA\Response(response=422, description="Validation error")
      * )
      */
     public function update(Request $request, $id)
@@ -149,15 +147,18 @@ class PerencanaanController extends Controller
      * @OA\Delete(
      *     path="/api/perencanaan/{id}",
      *     tags={"Perencanaan"},
-     *     summary="Delete perencanaan by ID",
+     *     summary="Hapus perencanaan berdasarkan ID",
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="ID perencanaan",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
-     *     @OA\Response(response=200, description="Perencanaan deleted")
+     *     @OA\Response(response=200, description="Perencanaan berhasil dihapus"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Data tidak ditemukan")
      * )
      */
     public function destroy($id)
