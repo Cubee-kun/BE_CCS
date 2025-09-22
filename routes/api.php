@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FormController;
@@ -13,18 +12,21 @@ use App\Http\Controllers\EvaluasiController;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
 */
 
+// ==========================
 // Public routes
+// ==========================
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
 
+// Evaluasi publik (hanya read)
+Route::apiResource('evaluasi', EvaluasiController::class)->only(['index', 'show']);
+
+
+// ==========================
 // Authenticated routes
+// ==========================
 Route::middleware('auth:api')->group(function () {
     // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -44,7 +46,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/upload', [FormController::class, 'uploadDokumentasi']);
     });
 
-    // User management routes (admin only)
+    // User management routes (admin only, gunakan policy / gate)
     Route::prefix('users')->group(function () {
         Route::get('/', [UserController::class, 'index'])->middleware('can:viewAny,App\Models\User');
         Route::post('/', [UserController::class, 'store'])->middleware('can:create,App\Models\User');
@@ -53,9 +55,11 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{user}', [UserController::class, 'destroy'])->middleware('can:delete,user');
     });
 
+    // Laporan
     Route::get('/laporan', [LaporanController::class, 'index']);
     Route::get('/laporan/{id}', [LaporanController::class, 'show']);
     Route::get('/laporan/cetak', [LaporanController::class, 'cetak']);
 
-    Route::apiResource('evaluasi', EvaluasiController::class);
+    // Evaluasi full CRUD (admin / user login)
+    Route::apiResource('evaluasi', EvaluasiController::class)->except(['index', 'show']);
 });
