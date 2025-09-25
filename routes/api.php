@@ -65,6 +65,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index']);
     Route::get('/laporan/{id}', [LaporanController::class, 'show']);
     Route::get('/laporan/cetak', [LaporanController::class, 'cetak']);
+    Route::get('/laporan/cetak/{id}', [LaporanController::class, 'cetakById']);
 
     // Evaluasi full CRUD (admin/user login)
     Route::apiResource('evaluasi', EvaluasiController::class)->except(['index', 'show']);

@@ -24,6 +24,7 @@ return array(
     'App\\Models\\Perencanaan' => $baseDir . '/app/Models/Perencanaan.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
     'App\\Policies\\UserPolicy' => $baseDir . '/app/Policies/UserPolicy.php',
+    'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
     'App\\Services\\BlockchainService' => $baseDir . '/app/Services/BlockchainService.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',

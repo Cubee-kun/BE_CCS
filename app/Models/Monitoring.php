@@ -31,7 +31,8 @@ class Monitoring extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+    protected 
+    $fillable = [
         'implementasi_id',
         'jumlah_bibit_ditanam',
         'jumlah_bibit_mati',
