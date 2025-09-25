@@ -7,16 +7,18 @@ return [
         'logout',
         'register',
         'documentation',
+        'api/documentation', // l5-swagger UI
+        'api-docs.json',     // file json swagger kustom di resources/views/swagger
     ],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
         'http://localhost:5173',
-        'https://sebumi-production.netlify.app',
+        'http://127.0.0.1:5173',   // tambahkan ini untuk FE Vite di 127.0.0.1
         'http://localhost:8000',
         'http://127.0.0.1:8000',
-        // hapus '*' agar sesuai dengan credentials
+        'https://sebumi-production.netlify.app',
     ],
 
     'allowed_origins_patterns' => [],
