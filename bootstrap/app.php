@@ -4,8 +4,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\HandleCors;
-use Illuminate\Http\Middleware\JwtMiddleware;
-
+use App\Http\Middleware\JwtMiddleware;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,8 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'cors' => HandleCors::class,
             'jwt' => JwtMiddleware::class,
         ]);
+
         $middleware->group('api', [
             HandleCors::class,
+            ThrottleRequests::class . ':api',
+            SubstituteBindings::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

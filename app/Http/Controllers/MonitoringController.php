@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Monitoring;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class MonitoringController extends Controller
 {
@@ -14,15 +15,13 @@ class MonitoringController extends Controller
      *   tags={"Monitoring"},
      *   summary="Create monitoring",
      *   security={{"bearerAuth":{}}},
-     *   @OA\Parameter(
-     *     name="implementasi_id",
-     *     in="path",
-     *     required=true,
-     *     @OA\Schema(type="integer")
-     *   ),
+     *   @OA\Parameter(name="implementasi_id", in="path", required=true, @OA\Schema(type="integer")),
      *   @OA\RequestBody(
      *     required=true,
-     *     @OA\JsonContent(ref="#/components/schemas/Monitoring")
+     *     @OA\MediaType(
+     *       mediaType="multipart/form-data",
+     *       @OA\Schema(ref="#/components/schemas/Monitoring")
+     *     )
      *   ),
      *   @OA\Response(response=201, description="Monitoring created"),
      *   @OA\Response(response=422, description="Validation error")
@@ -41,11 +40,16 @@ class MonitoringController extends Controller
             'bercak_daun' => 'required|in:<25%,25–45%,50–74%,>75%',
             'daun_serangga' => 'required|in:<25%,25–45%,50–74%,>75%',
             'survival_rate' => 'required|numeric|between:0,100',
-            'dokumentasi_monitoring' => 'nullable|string',
+            'dokumentasi_monitoring' => 'nullable|file|image|max:2048',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json(['message' => 'Validation error', 'errors' => $validator->errors()], 422);
+        }
+
+        $dokPath = null;
+        if ($request->hasFile('dokumentasi_monitoring')) {
+            $dokPath = $request->file('dokumentasi_monitoring')->store('monitoring', 'public');
         }
 
         $monitoring = Monitoring::create([
@@ -60,7 +64,7 @@ class MonitoringController extends Controller
             'bercak_daun' => $request->bercak_daun,
             'daun_serangga' => $request->daun_serangga,
             'survival_rate' => $request->survival_rate,
-            'dokumentasi_monitoring' => $request->dokumentasi_monitoring,
+            'dokumentasi_monitoring' => $dokPath,
         ]);
 
         return response()->json([

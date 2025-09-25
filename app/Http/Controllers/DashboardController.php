@@ -35,10 +35,10 @@ class DashboardController extends Controller
             $q->where('user_id', $user->id);
         })->count();
 
-        $recentActivities = Perencanaan::where('user_id', $user->id)
-            ->with(['implementasi', 'implementasi.monitoring'])
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
+        $recentActivities = Perencanaan::with(['implementasi.monitoring'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->take(10)
             ->get();
 
         return response()->json([
@@ -47,7 +47,7 @@ class DashboardController extends Controller
                 'total_implementasi' => $totalImplementasi,
                 'total_monitoring' => $totalMonitoring,
             ],
-            'recent_activities' => $recentActivities
+            'recent_activities' => $recentActivities,
         ]);
     }
 }

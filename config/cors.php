@@ -1,4 +1,5 @@
 <?php
+
 return [
     'paths' => [
         'api/*',
@@ -6,17 +7,16 @@ return [
         'logout',
         'register',
         'documentation',
-        // 'sanctum/csrf-cookie',
     ],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'http://localhost:5173', // FE React/Vue
-        'https://sebumi-production.netlify.app/',
+        'http://localhost:5173',
+        'https://sebumi-production.netlify.app',
         'http://localhost:8000',
         'http://127.0.0.1:8000',
-        '*', // untuk development, boleh dihapus di production
+        // hapus '*' agar sesuai dengan credentials
     ],
 
     'allowed_origins_patterns' => [],
