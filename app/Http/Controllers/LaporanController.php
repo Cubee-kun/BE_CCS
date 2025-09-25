@@ -8,68 +8,18 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/laporan",
-     *     tags={"Laporan"},
-     *     summary="Get all laporan (perencanaan, implementasi, monitoring)",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="List laporan",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(type="object")
-     *         )
-     *     )
-     * )
-     */
-    public function index(Request $request)
+    public function index()
     {
         $laporan = Perencanaan::with(['implementasi.monitoring'])->get();
-
         return response()->json($laporan);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/laporan/{id}",
-     *     tags={"Laporan"},
-     *     summary="Get laporan detail by perencanaan ID",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Laporan detail",
-     *         @OA\JsonContent(type="object")
-     *     ),
-     *     @OA\Response(response=404, description="Not found")
-     * )
-     */
     public function show($id)
     {
         $perencanaan = Perencanaan::with(['implementasi.monitoring'])->findOrFail($id);
         return response()->json($perencanaan);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/laporan/cetak",
-     *     tags={"Laporan"},
-     *     summary="Download seluruh laporan sebagai PDF",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="PDF file",
-     *         content={
-     *           @OA\MediaType(
-     *             mediaType="application/pdf",
-     *             @OA\Schema(type="string", format="binary")
-     *           )
-     *         }
-     *     )
-     * )
-     */
     public function cetak()
     {
         $laporan = Perencanaan::with(['implementasi.monitoring'])->get();
@@ -77,30 +27,40 @@ class LaporanController extends Controller
         return $pdf->download('laporan-semua.pdf');
     }
 
-    /**
-     * @OA\Get(
-     *     path="/api/laporan/cetak/{id}",
-     *     tags={"Laporan"},
-     *     summary="Download laporan perencanaan tertentu sebagai PDF",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(
-     *         response=200,
-     *         description="PDF file",
-     *         content={
-     *           @OA\MediaType(
-     *             mediaType="application/pdf",
-     *             @OA\Schema(type="string", format="binary")
-     *           )
-     *         }
-     *     ),
-     *     @OA\Response(response=404, description="Not found")
-     * )
-     */
     public function cetakById($id)
     {
         $perencanaan = Perencanaan::with(['implementasi.monitoring'])->findOrFail($id);
         $pdf = Pdf::loadView('laporan.pdf', ['laporan' => collect([$perencanaan])])->setPaper('a4', 'portrait');
         return $pdf->download("laporan-perencanaan-{$id}.pdf");
+    }
+
+    // Tambahan CRUD manual
+
+    public function store(Request $request)
+    {
+        $laporan = Perencanaan::create($request->all());
+        return response()->json([
+            'message' => 'Laporan created',
+            'data' => $laporan
+        ], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $laporan = Perencanaan::findOrFail($id);
+        $laporan->update($request->all());
+
+        return response()->json([
+            'message' => 'Laporan updated',
+            'data' => $laporan
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $laporan = Perencanaan::findOrFail($id);
+        $laporan->delete();
+
+        return response()->json(['message' => 'Laporan deleted']);
     }
 }
