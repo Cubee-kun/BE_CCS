@@ -28,7 +28,10 @@ return [
         'views' => base_path('resources/views/vendor/l5-swagger'),
         'base' => env('L5_SWAGGER_BASE_PATH', null),
         'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'vendor/swagger-api/swagger-ui/dist/'),
-        'excludes' => [],
+        'excludes' => [
+            base_path('app/Providers'), // tambahkan baris ini
+            base_path('app/Providers/AuthServiceProvider.php'),
+        ],
     ],
 
     'security' => [

@@ -27,6 +27,7 @@ return array(
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
     'App\\Services\\BlockchainService' => $baseDir . '/app/Services/BlockchainService.php',
+    'App\\Services\\IpfsService' => $baseDir . '/app/Services/IpfsService.php',
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Barryvdh\\DomPDF\\Facade\\Pdf' => $vendorDir . '/barryvdh/laravel-dompdf/src/Facade/Pdf.php',
     'Barryvdh\\DomPDF\\PDF' => $vendorDir . '/barryvdh/laravel-dompdf/src/PDF.php',
