@@ -36,7 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class Perencanaan extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
