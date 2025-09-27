@@ -10,26 +10,26 @@ use Illuminate\Support\Facades\Storage;
 class ImplementasiController extends Controller
 {
     /**
-     * @OA\Post(
-     *   path="/api/implementasi/{perencanaan_id}",
-     *   tags={"Implementasi"},
-     *   summary="Create implementasi",
-     *   security={{"bearerAuth":{}}},
-     *   @OA\Parameter(name="perencanaan_id", in="path", required=true, @OA\Schema(type="integer")),
-     *   @OA\RequestBody(
-     *     required=true,
-     *     @OA\MediaType(
-     *       mediaType="multipart/form-data",
-     *       @OA\Schema(ref="#/components/schemas/Implementasi")
-     *     )
-     *   ),
-     *   @OA\Response(response=201, description="Implementasi created"),
-     *   @OA\Response(response=422, description="Validation error")
-     * )
-     */
-    public function store(Request $request, $perencanaan_id)
+    * @OA\Post(
+    *   path="/api/implementasi",
+    *   tags={"Implementasi"},
+    *   summary="Create implementasi",
+    *   security={{"bearerAuth":{}}},
+    *   @OA\RequestBody(
+    *     required=true,
+    *     @OA\MediaType(
+    *       mediaType="multipart/form-data",
+    *       @OA\Schema(ref="#/components/schemas/Implementasi")
+    *     )
+    *   ),
+    *   @OA\Response(response=201, description="Implementasi created"),
+    *   @OA\Response(response=422, description="Validation error")
+    * )
+    */
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'perencanaan_id' => 'required|exists:perencanaans,id',
             'nama_perusahaan_sesuai' => 'required|boolean',
             'lokasi_sesuai' => 'required|boolean',
             'jenis_kegiatan_sesuai' => 'required|boolean',
@@ -53,7 +53,7 @@ class ImplementasiController extends Controller
         }
 
         $implementasi = Implementasi::create([
-            'perencanaan_id' => $perencanaan_id,
+            'perencanaan_id' => $request->perencanaan_id,
             'nama_perusahaan_sesuai' => $request->nama_perusahaan_sesuai,
             'lokasi_sesuai' => $request->lokasi_sesuai,
             'jenis_kegiatan_sesuai' => $request->jenis_kegiatan_sesuai,
