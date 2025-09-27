@@ -10,9 +10,9 @@ return [
         'docs' => 'docs',
         'oauth2_callback' => 'api/oauth2-callback',
         'middleware' => [
-            'api' => ['auth:api'],
+            'api' => ['auth:api'], // endpoint JSON spec
             'assets' => [],
-            'docs' => [],
+            'docs' => ['auth'],    // halaman UI Swagger DIKUNCI login web
             'oauth2_callback' => [],
         ],
         'group_options' => [],
