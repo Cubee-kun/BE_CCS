@@ -37,9 +37,14 @@ class DashboardController extends Controller
      */
     public function stats()
     {
-        $user = auth()->user();
+        try {
+            $user = auth()->user();
+            
+            if (!$user) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
 
-        // Totals (real-time per user)
+            // Totals (real-time per user)
         $totalPerencanaan = Perencanaan::where('user_id', $user->id)->count();
 
         $totalImplementasi = Implementasi::whereHas('perencanaan', function ($q) use ($user) {
@@ -149,26 +154,38 @@ class DashboardController extends Controller
             ->values()
             ->take(10);
 
-        return response()->json([
-            'stats' => [
-                'total_perencanaan' => $totalPerencanaan,
-                'total_implementasi' => $totalImplementasi,
-                'total_monitoring' => $totalMonitoring,
-                'total_evaluasi' => $totalEvaluasi,
-                'avg_survival_monitoring' => $avgSurvivalMonitoring,
-                'avg_survival_evaluasi' => $avgSurvivalEvaluasi,
-            ],
-            'charts' => [
-                'perencanaan_per_hari' => $perTanggal,
-                'implementasi_per_hari' => $impTanggal,
-                'monitoring_per_hari' => $monTanggal,
-                'evaluasi_per_hari' => $evaTanggal,
-            ],
-            'breakdowns' => [
-                'jenis_kegiatan' => $jenisKegiatan,
-            ],
-            'recent_activities' => $recent,
-        ]);
+            return response()->json([
+                'stats' => [
+                    'total_perencanaan' => $totalPerencanaan,
+                    'total_implementasi' => $totalImplementasi,
+                    'total_monitoring' => $totalMonitoring,
+                    'total_evaluasi' => $totalEvaluasi,
+                    'avg_survival_monitoring' => $avgSurvivalMonitoring,
+                    'avg_survival_evaluasi' => $avgSurvivalEvaluasi,
+                ],
+                'charts' => [
+                    'perencanaan_per_hari' => $perTanggal,
+                    'implementasi_per_hari' => $impTanggal,
+                    'monitoring_per_hari' => $monTanggal,
+                    'evaluasi_per_hari' => $evaTanggal,
+                ],
+                'breakdowns' => [
+                    'jenis_kegiatan' => $jenisKegiatan,
+                ],
+                'recent_activities' => $recent,
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Dashboard stats error: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'message' => 'Error retrieving dashboard statistics',
+                'error' => env('APP_DEBUG') ? $e->getMessage() : 'Internal server error'
+            ], 500);
+        }
     }
 
     private function timeSeries($baseQuery, string $dateColumn = 'created_at', int $days = 30): array
