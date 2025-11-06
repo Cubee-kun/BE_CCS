@@ -179,7 +179,7 @@ class DashboardController extends Controller
                 'user_id' => auth()->id(),
                 'exception' => $e,
             ]);
-            
+
             return response()->json([
                 'error' => 'Failed to fetch dashboard statistics',
                 'message' => $e->getMessage()
