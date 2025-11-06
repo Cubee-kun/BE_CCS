@@ -21,8 +21,16 @@ class UserController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', User::class);
-        return response()->json(User::all());
+        try {
+            $this->authorize('viewAny', User::class);
+            return response()->json(['data' => User::all()]);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            \Log::warning('User list authorization failed', [
+                'auth_user_id' => auth()->id(),
+                'exception' => $e->getMessage()
+            ]);
+            return response()->json(['error' => 'Unauthorized to view users'], 403);
+        }
     }
 
     /**
@@ -68,19 +76,29 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', User::class);
+        try {
+            $this->authorize('create', User::class);
 
-        $validated = $request->validate([
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|min:6',
-            'role' => 'required|string|in:admin,user',
-        ]);
+            $validated = $request->validate([
+                'name' => 'required|string|between:2,100',
+                'email' => 'required|string|email|max:100|unique:users',
+                'password' => 'required|string|min:6',
+                'role' => 'required|string|in:admin,user',
+            ]);
 
-        $validated['password'] = bcrypt($validated['password']);
-        $user = User::create($validated);
+            $validated['password'] = bcrypt($validated['password']);
+            $user = User::create($validated);
 
-        return response()->json(['message' => 'User created', 'user' => $user], 201);
+            return response()->json(['message' => 'User created', 'user' => $user], 201);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            \Log::warning('User create authorization failed', [
+                'auth_user_id' => auth()->id(),
+                'exception' => $e->getMessage()
+            ]);
+            return response()->json(['error' => 'Unauthorized to create users'], 403);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['error' => 'Validation failed', 'messages' => $e->errors()], 422);
+        }
     }
 
     /**
@@ -109,23 +127,38 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-        $this->authorize('update', $user);
+        try {
+            $user = User::findOrFail($id);
+            $this->authorize('update', $user);
 
-        $validated = $request->validate([
-            'name' => 'sometimes|string|between:2,100',
-            'email' => 'sometimes|string|email|max:100|unique:users,email,'.$user->id,
-            'password' => 'sometimes|string|min:6',
-            'role' => 'sometimes|string|in:admin,user',
-        ]);
+            $validated = $request->validate([
+                'name' => 'sometimes|string|between:2,100',
+                'email' => 'sometimes|string|email|max:100|unique:users,email,'.$user->id,
+                'password' => 'sometimes|string|min:6',
+                'role' => 'sometimes|string|in:admin,user',
+            ]);
 
-        if (isset($validated['password'])) {
-            $validated['password'] = bcrypt($validated['password']);
+            if (isset($validated['password'])) {
+                $validated['password'] = bcrypt($validated['password']);
+            }
+
+            $user->update($validated);
+
+            return response()->json(['message' => 'User updated', 'user' => $user]);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            \Log::warning('User update authorization failed', [
+                'auth_user_id' => auth()->id(),
+                'target_user_id' => $id,
+                'exception' => $e->getMessage()
+            ]);
+            return response()->json(['error' => 'Unauthorized to update this user'], 403);
+        } catch (\Exception $e) {
+            \Log::error('User update error', [
+                'user_id' => $id,
+                'exception' => $e->getMessage()
+            ]);
+            return response()->json(['error' => 'Failed to update user'], 500);
         }
-
-        $user->update($validated);
-
-        return response()->json(['message' => 'User updated', 'user' => $user]);
     }
 
     /**
@@ -145,10 +178,25 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $this->authorize('delete', $user);
-        $user->delete();
+        try {
+            $user = User::findOrFail($id);
+            $this->authorize('delete', $user);
+            $user->delete();
 
-        return response()->json(['message' => 'User deleted']);
+            return response()->json(['message' => 'User deleted']);
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            \Log::warning('User delete authorization failed', [
+                'auth_user_id' => auth()->id(),
+                'target_user_id' => $id,
+                'exception' => $e->getMessage()
+            ]);
+            return response()->json(['error' => 'Unauthorized to delete this user'], 403);
+        } catch (\Exception $e) {
+            \Log::error('User delete error', [
+                'user_id' => $id,
+                'exception' => $e->getMessage()
+            ]);
+            return response()->json(['error' => 'Failed to delete user'], 500);
+        }
     }
 }

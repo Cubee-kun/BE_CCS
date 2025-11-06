@@ -23,11 +23,14 @@ class UserPolicy
 
     public function update(User $user, User $model)
     {
+        // Admin can update anyone, or user can update themselves
         return $user->role === 'admin' || $user->id === $model->id;
     }
 
     public function delete(User $user, User $model)
     {
-        return $user->role === 'admin';
+        // Only admin can delete other users
+        // User cannot delete themselves
+        return $user->role === 'admin' && $user->id !== $model->id;
     }
 }

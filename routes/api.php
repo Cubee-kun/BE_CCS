@@ -67,11 +67,11 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/dokumentasi/{id}', [DokumentasiController::class, 'destroy']);
 
     // ---------------- Users (CRUD) ----------------
-    Route::get('/users', [UserController::class, 'index'])->middleware('can:viewAny,App\Models\User');
-    Route::post('/users', [UserController::class, 'store'])->middleware('can:create,App\Models\User');
-    Route::get('/users/{id}', [UserController::class, 'show'])->middleware('can:view,user');
-    Route::put('/users/{id}', [UserController::class, 'update'])->middleware('can:update,user');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->middleware('can:delete,user');
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
     // ---------------- Laporan (CRUD) ----------------
     Route::get('/laporan', [LaporanController::class, 'index']);
