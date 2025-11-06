@@ -1,41 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Password;
+// API-only backend: no Blade views, return simple JSON for web routes
 
-// Redirect root to dashboard
+// Root endpoint - basic API info
 Route::get('/', function () {
-    return view('dashboard.index', [
-        'stats' => [
-            'total_perencanaan' => 0,
-            'total_implementasi' => 0,
-            'total_monitoring' => 0,
-        ],
-        'recentActivities' => [],
+    return response()->json([
+        'app' => config('app.name', 'CCS API'),
+        'status' => 'ok',
+        'version' => app()->version(),
+        'timestamp' => now()->toIso8601String(),
     ]);
-})->name('dashboard');
+})->name('root');
 
-// Auth
-Route::get('/login', function () { return view('auth.login'); })->name('login');
-Route::get('/register', function () { return view('auth.register'); })->name('register');
-
-Route::get('password/reset', function () {
-    return view('auth.passwords.email');
-})->name('password.request');
-
-Route::post('password/email', function (\Illuminate\Http\Request $request) {
-    $request->validate(['email' => 'required|email']);
-    $status = Password::sendResetLink($request->only('email'));
-    return $status === Password::RESET_LINK_SENT
-        ? back()->with(['status' => __($status)])
-        : back()->withErrors(['email' => __($status)]);
-})->name('password.email');
-
-// Perencanaan
-Route::get('/perencanaan', function () { return view('dashboard.perencanaan'); })->name('perencanaan.create');
-
-// Implementasi
-Route::get('/implementasi', function () { return view('dashboard.implementasi', ['perencanaan' => (object)['nama_perusahaan'=>'','jenis_kegiatan'=>'','lokasi'=>'','id'=>1]]); })->name('implementasi.create');
-
-// Monitoring
-Route::get('/monitoring', function () { return view('dashboard.monitoring'); })->name('monitoring.create');
+// Optional: simple web fallback to JSON 404 (separate from API fallback)
+Route::fallback(function () {
+    return response()->json(['message' => 'Not Found'], 404);
+});
