@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,13 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // Prevent fatal errors when Vite manifest is missing in production deployments
+        // This safely no-ops the @vite directive if no dev server or build output is present.
+        if (! file_exists(public_path('build/manifest.json')) && ! file_exists(public_path('hot'))) {
+            Blade::directive('vite', function ($expression) {
+                return '';
+            });
+        }
     }
 }
