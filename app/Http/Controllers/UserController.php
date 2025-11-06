@@ -136,12 +136,16 @@ class UserController extends Controller
             $validated = $request->validate([
                 'name' => 'sometimes|string|between:2,100',
                 'email' => 'sometimes|string|email|max:100|unique:users,email,'.$user->id,
-                'password' => 'sometimes|string|min:6',
+                'password' => 'sometimes|nullable|string|min:6',  // ✅ Add nullable
                 'role' => 'sometimes|string|in:admin,user',
             ]);
 
-            if (isset($validated['password'])) {
+            // ✅ Only hash password if provided and not empty
+            if (!empty($validated['password'])) {
                 $validated['password'] = bcrypt($validated['password']);
+            } else {
+                // ✅ Remove password key if empty
+                unset($validated['password']);
             }
 
             $user->update($validated);
