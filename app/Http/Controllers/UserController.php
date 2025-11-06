@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Validation\ValidationException;
 use App\Models\User;
 
 class UserController extends Controller
@@ -24,7 +26,7 @@ class UserController extends Controller
         try {
             $this->authorize('viewAny', User::class);
             return response()->json(['data' => User::all()]);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             \Log::warning('User list authorization failed', [
                 'auth_user_id' => auth()->id(),
                 'exception' => $e->getMessage()
@@ -90,13 +92,13 @@ class UserController extends Controller
             $user = User::create($validated);
 
             return response()->json(['message' => 'User created', 'user' => $user], 201);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             \Log::warning('User create authorization failed', [
                 'auth_user_id' => auth()->id(),
                 'exception' => $e->getMessage()
             ]);
             return response()->json(['error' => 'Unauthorized to create users'], 403);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json(['error' => 'Validation failed', 'messages' => $e->errors()], 422);
         }
     }
@@ -145,19 +147,23 @@ class UserController extends Controller
             $user->update($validated);
 
             return response()->json(['message' => 'User updated', 'user' => $user]);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             \Log::warning('User update authorization failed', [
                 'auth_user_id' => auth()->id(),
                 'target_user_id' => $id,
                 'exception' => $e->getMessage()
             ]);
             return response()->json(['error' => 'Unauthorized to update this user'], 403);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => 'Validation failed', 'messages' => $e->errors()], 422);
         } catch (\Exception $e) {
             \Log::error('User update error', [
                 'user_id' => $id,
-                'exception' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
-            return response()->json(['error' => 'Failed to update user'], 500);
+            return response()->json(['error' => 'Failed to update user', 'message' => $e->getMessage()], 500);
         }
     }
 
@@ -184,7 +190,7 @@ class UserController extends Controller
             $user->delete();
 
             return response()->json(['message' => 'User deleted']);
-        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+        } catch (AuthorizationException $e) {
             \Log::warning('User delete authorization failed', [
                 'auth_user_id' => auth()->id(),
                 'target_user_id' => $id,
@@ -194,9 +200,11 @@ class UserController extends Controller
         } catch (\Exception $e) {
             \Log::error('User delete error', [
                 'user_id' => $id,
-                'exception' => $e->getMessage()
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ]);
-            return response()->json(['error' => 'Failed to delete user'], 500);
+            return response()->json(['error' => 'Failed to delete user', 'message' => $e->getMessage()], 500);
         }
     }
 }
